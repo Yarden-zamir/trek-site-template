@@ -20,7 +20,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TREK = json.loads((ROOT / "trek.json").read_text())
+TREK = json.loads((ROOT / "trek.json").read_text()) if (ROOT / "trek.json").exists() else {}  # not needed for --url runs
 CHROME = next((c for c in ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", shutil.which("google-chrome"), shutil.which("chromium"), shutil.which("chrome")] if c and os.path.exists(c)), None)
 if not CHROME:
     sys.exit("no Chrome found for headless checks")

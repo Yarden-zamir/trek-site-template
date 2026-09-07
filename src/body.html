@@ -1,0 +1,118 @@
+<!--
+Content skeleton. Write the real content per trek, in every language listed in trek.json, keeping
+the structure and the attributes the app depends on. Delete these comments when done.
+Rules the app depends on:
+  - Each day card: <div class="stage" data-day="N" data-date="YYYY-MM-DD"> with the D-marker link,
+    an <h3> whose text is wrapped in <a class="daylink" data-focus="day:N">, a .stats row with a
+    planned-hours chip like "6–7 h", and an empty <div class="wx" aria-live="polite"></div>.
+  - Both language blocks: <div id="en" lang="en" class="wrap"> and <div id="he" lang="he" dir="rtl"
+    class="wrap" hidden>. The language button lives in .langbar.
+  - The map block appears once per language: <div class="mapbox" data-map="LANG"> … as below.
+  - Section maps: {{MAP:key|alt text}} tokens; keys come from trek.json sectionMaps.
+  - Tables: first row is <th> headers; add a <caption>. Place names in text are linked by the build
+    from trek.json "places"; do not hand-link them.
+-->
+<div class="langbar"><button id="langbtn" type="button">עברית</button></div>
+
+<div id="en" lang="en" class="wrap">
+<header>
+  <div class="topo" aria-hidden="true"></div>
+  <div class="eyebrow"><span class="balise"></span>TRAIL · REGION · DATES</div>
+  <h1>TREK NAME</h1>
+  <p class="lede">One paragraph: who, when, where, style (tent, huts), what the page is for.</p>
+  <div class="facts">
+    <div><b>≈NN km</b><span>START → END</span></div>
+    <div><b>≈N,NNN m</b><span>total ascent</span></div>
+    <div><b>≈N,NNN m</b><span>total descent</span></div>
+    <div><b>N,NNN m</b><span>high point, NAME</span></div>
+    <div><b>N days</b><span>DAY → DAY</span></div>
+    <div><b>N L</b><span>water to carry on dry days</span></div>
+  </div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#plan">Plan</a><a href="#maps">Maps</a><a href="#rules">Rules &amp; water</a><a href="#tech">Technical</a><a href="#practical">Practical</a><a href="#links">Links</a><a href="/route.gpx" download>GPX for OsmAnd ↓</a>
+  </nav>
+</header>
+
+<h2 id="plan"><span class="k">§1</span>The plan</h2>
+<p>Intro: pace assumptions, rules that shape the day (camping hours, sunset), the GPX in Downloads.</p>
+<p class="planbar"><button type="button" data-act="snapshot">Where am I</button> <span class="snapstatus">One position fix, no tracking: marks finished days done and fills in today's distance, ascent left and arrival estimate. Long-press to pick your position on the map instead. Tap a day title to see it on the map.</span></p>
+
+<div class="stage" data-day="0" data-date="YYYY-MM-DD">
+  <div class="d"><a href="#map" data-focus="day:0">D0<small>DOW DD MON</small></a></div>
+  <div>
+    <h3><a href="#map" class="daylink" data-focus="day:0">Arrival → START</a></h3>
+    <div class="stats"><span>transport, times</span><span>check-in window</span></div>
+    <div class="wx" aria-live="polite"></div>
+    <p>Booked accommodation, phone, shopping, what must not slip.</p>
+  </div>
+</div>
+<div class="stage" data-day="1" data-date="YYYY-MM-DD">
+  <div class="d"><a href="#map" data-focus="day:1">D1<small>DOW DD MON</small></a></div>
+  <div>
+    <h3><a href="#map" class="daylink" data-focus="day:1">START → NIGHT 1 PLACE</a></h3>
+    <div class="stats"><span>≈NN km</span><span>+NNN / −NNN m</span><span>N–N h</span><span>sleep: where, elevation, rules</span></div>
+    <div class="wx" aria-live="polite"></div>
+    <p>Two to four sentences: water, the hard bit, the option, the fallback.</p>
+  </div>
+</div>
+<!-- more days … -->
+<div class="note"><p><b>Spare day?</b> … <b>Faster?</b> …</p></div>
+
+<h2 id="maps"><span class="k">§2</span>Maps and profile</h2>
+<p>This map is drawn live from the same GPX you download for OsmAnd. Tap any line or dot for its note. Layers toggle each track and kind of waypoint. "Where am I" shows your position and distance to the next night. "Save whole route offline" stores the map tiles; the page and GPX are stored automatically.</p>
+<div class="mapbox" data-map="en">
+  <div class="livemap" role="application" aria-label="Interactive map of the route"></div>
+  <div class="maptools">
+    <button type="button" data-act="locate"></button>
+    <button type="button" data-act="saveroute"></button>
+    <span class="mapstatus"></span>
+  </div>
+  <canvas class="profile" aria-label="Elevation profile"></canvas>
+  <p class="profstats"></p>
+</div>
+<details class="staticmaps">
+  <summary>Annotated section maps, for printing or offline</summary>
+  <figure>{{MAP:overview|Overview map with the nights}}<figcaption>Whole route, north at top.</figcaption></figure>
+</details>
+
+<h2 id="rules"><span class="k">§3</span>Rules and water</h2>
+<div class="note rule"><p><b>Camping rules</b> …</p><p><b>Protected zones</b> …</p><p><b>Dry stretches</b> …</p></div>
+<div class="scroll"><table>
+  <caption>Huts, water and where to pitch</caption>
+  <tr><th>Place</th><th>Alt.</th><th>Open</th><th>Tent</th><th>Note</th></tr>
+  <tr><td>PLACE</td><td class="n">N,NNN m</td><td>…</td><td>…</td><td>…</td></tr>
+</table></div>
+
+<h2 id="tech"><span class="k">§4</span>Technical options</h2>
+<p>What is on the line, then what can be added.</p>
+<div class="scroll"><table>
+  <caption>Technical options and side trips</caption>
+  <tr><th>Objective</th><th>From</th><th>What it is</th><th>Time</th></tr>
+  <tr><td>…</td><td>…</td><td>…</td><td class="n">…</td></tr>
+</table></div>
+
+<h2 id="practical"><span class="k">§5</span>Practical</h2>
+<div class="two">
+  <div>
+    <h3>Season</h3>
+    <ul><li>Climate, daylight, live forecast note and official warning links.</li></ul>
+    <h3>Transport</h3>
+    <ul><li>Getting there, back, and bail-outs.</li></ul>
+  </div>
+  <div>
+    <h3>Gear</h3>
+    <ul><li>…</li><li>Emergency: 112.</li></ul>
+  </div>
+</div>
+
+<h2 id="links"><span class="k">§6</span>Links</h2>
+<h3>Trip reports</h3>
+<ul><li><a href="…">…</a>, when, style, why read it.</li></ul>
+<h3>Official</h3>
+<ul><li><a href="…">…</a></li></ul>
+</div>
+
+<div id="he" lang="he" dir="rtl" class="wrap" hidden>
+<!-- Same structure in Hebrew. Write it as a Hebrew hiker would say it, not as a translation.
+     Keep Latin place names. Anchor ids prefixed he- (#he-plan …). data-map="he" on the mapbox. -->
+</div>

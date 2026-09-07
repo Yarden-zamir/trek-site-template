@@ -15,7 +15,7 @@ agent skill, which lists the inputs and the steps.
   (optional "HH:MM"), `languages`, `elevationDataset`, `places` (text → map focus query),
   `waypoints`, `route` (`osm_relations` in walking order + `start`, or `gpx_in`), `sectionMaps`,
   `enrich` (`water_radius_m`, optional `boundary`), `side_trips`, `strings` (per-language overrides
-  of the app's wording, for example the heat warning), `weatherModel` and `weatherModelLabel`
+  of the app's wording, for example the heat warning), `treeline` (metres; exposure threshold for the day simulator), `weatherModel` and `weatherModelLabel`
   (Open-Meteo model id such as `meteofrance_seamless` for the Alps; values beyond that model's
   horizon are filled from the default blend; unset means the default blend, which matched the
   Israel Meteorological Service within about 1 °C).
@@ -43,6 +43,18 @@ Waypoint names carry meaning. The app reads them to find days, nights and the fi
 
 Day cards in `src/body.html` carry `data-day="n"` and `data-date="YYYY-MM-DD"`. The planned
 hours chip (`8–9 h`) in a card feeds the arrival estimate and the hourly walking window.
+
+## Day simulator
+
+"Hour by hour" on a day card opens a start-time slider (05:30 to 10:00) over one chart: your
+altitude through the day for that start, drawn thick where exposed (above `treeline` in trek.json,
+or near a PASS waypoint), storm, heavy-rain and gust hours shaded at the place you would be, a
+strip with the share of ECMWF ensemble members showing storm conditions at the day's high point,
+and below it temperature and rain at your position. Timing is Naismith scaled to the card's
+planned hours. The weather is fetched once for every hour at every sample point along each day
+(about one per 2.5 km plus the high point) and cached, so the slider and offline use need no
+further requests. A recommended start minimises exposed hours in risk while arriving before
+sunset.
 
 ## Per-trek README
 

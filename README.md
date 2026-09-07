@@ -15,7 +15,10 @@ agent skill, which lists the inputs and the steps.
   (optional "HH:MM"), `languages`, `elevationDataset`, `places` (text → map focus query),
   `waypoints`, `route` (`osm_relations` in walking order + `start`, or `gpx_in`), `sectionMaps`,
   `enrich` (`water_radius_m`, optional `boundary`), `side_trips`, `strings` (per-language overrides
-  of the app's wording, for example the heat warning).
+  of the app's wording, for example the heat warning), `weatherModel` and `weatherModelLabel`
+  (Open-Meteo model id such as `meteofrance_seamless` for the Alps; values beyond that model's
+  horizon are filled from the default blend; unset means the default blend, which matched the
+  Israel Meteorological Service within about 1 °C).
 - `src/body.html`: the content, written per trek, both languages. `src/head.html` (theme),
   `src/scripts.html` (language toggle, profile), `src/sw.js` (service worker template).
 - `site/map.js`: the generic app. Reads `window.TREK` (injected by the build) and the GPX.

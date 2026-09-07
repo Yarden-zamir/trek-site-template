@@ -109,6 +109,8 @@ def config_script() -> str:
         "plannedStart": TREK.get("plannedStart", 8),
         "tentWindow": TREK.get("tentWindow"),
         "strings": TREK.get("strings", {}),
+        "weatherModel": TREK.get("weatherModel"),
+        "weatherModelLabel": TREK.get("weatherModelLabel"),
         "elevation": {"eudem25m": "EU-DEM 25 m", "srtm30m": "SRTM 30 m", "aster30m": "ASTER 30 m"}.get(TREK.get("elevationDataset", "srtm30m"), TREK.get("elevationDataset")),
     }
     return "<script>window.TREK=" + json.dumps(cfg, ensure_ascii=False) + ";</script>\n"

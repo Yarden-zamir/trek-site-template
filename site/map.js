@@ -371,11 +371,32 @@
   function plannedStart(n) { return n === 0 ? null : ((window.TREK && window.TREK.plannedStart) || 8); }
 
   /* ---- forecast ---- */
-  function fetchForecast(points, startDate, endDate) {
-    var q = API + '?latitude=' + points.map(function (p) { return p.lat.toFixed(4); }).join(',') + '&longitude=' + points.map(function (p) { return p.lon.toFixed(4); }).join(',')
+  /* Forecast. trek.json "weatherModel" picks an Open-Meteo model (for example meteofrance_seamless for
+     the Alps, whose AROME/ARPEGE runs only reach about 4 days); values it leaves null are filled from
+     the default best_match blend, so the whole trek always has numbers. */
+  function omUrl(points, startDate, endDate, model) {
+    return API + '?latitude=' + points.map(function (p) { return p.lat.toFixed(4); }).join(',') + '&longitude=' + points.map(function (p) { return p.lon.toFixed(4); }).join(',')
       + '&elevation=' + points.map(function (p) { return Math.round(p.ele); }).join(',') + '&daily=' + DAILY + '&hourly=' + HOURLY
-      + '&timezone=' + encodeURIComponent((window.TREK && window.TREK.timezone) || 'auto') + '&wind_speed_unit=kmh&start_date=' + startDate + '&end_date=' + endDate;
-    return fetch(q).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (j) { return Array.isArray(j) ? j : [j]; });
+      + '&timezone=' + encodeURIComponent((window.TREK && window.TREK.timezone) || 'auto') + '&wind_speed_unit=kmh&start_date=' + startDate + '&end_date=' + endDate + (model ? '&models=' + model : '');
+  }
+  function getJson(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (j) { return Array.isArray(j) ? j : [j]; }); }
+  function fillNulls(primary, fallback) {
+    primary.forEach(function (loc, k) {
+      var fb = fallback[k]; if (!fb) return;
+      ['daily', 'hourly'].forEach(function (grp) {
+        Object.keys(loc[grp]).forEach(function (key) {
+          if (key === 'time' || !fb[grp][key]) return;
+          loc[grp][key] = loc[grp][key].map(function (v, i) { return v == null ? fb[grp][key][i] : v; });
+        });
+      });
+    });
+    return primary;
+  }
+  function fetchForecast(points, startDate, endDate) {
+    var model = window.TREK && window.TREK.weatherModel;
+    if (!model || model === 'best_match') return getJson(omUrl(points, startDate, endDate, null));
+    return Promise.all([getJson(omUrl(points, startDate, endDate, model)), getJson(omUrl(points, startDate, endDate, null))])
+      .then(function (r) { return fillNulls(r[0], r[1]); });
   }
   function hours(loc, date) { var out = []; loc.hourly.time.forEach(function (t, i) { if (t.indexOf(date) === 0) out.push({ h: +t.slice(11, 13), i: i }); }); return out; }
   function hv(loc, key, i) { var v = loc.hourly[key]; return v ? v[i] : null; }
@@ -467,7 +488,7 @@
     var ws = warnings(L, day, N, Hh, iN, iH, card);
     if (ws.length) html += '<div>' + ws.map(function (x) { return '<span class="wxwarn ' + x[1] + '">' + L.w[x[0]] + x[2] + '</span>'; }).join('') + '</div>';
     var age = Math.round((Date.now() - meta.t) / 60000), ageTxt = age < 60 ? age + ' min' : Math.round(age / 60) + ' h';
-    html += '<div class="wxmeta"><span class="wxfresh' + (age >= 360 ? ' old' : '') + '">' + L.fetched + ' ' + meta.when + ' (' + ageTxt + ' ' + L.ago + (age >= 360 ? ', ' + L.stale : '') + (meta.stale ? ', ' + L.offline : '') + ')</span> <button type="button" class="wxbtn" data-wx="refresh">' + L.refresh + '</button> <button type="button" class="wxbtn" data-wx="hourly">' + L.hourly + ' ▾</button></div>';
+    html += '<div class="wxmeta"><span class="wxfresh' + (age >= 360 ? ' old' : '') + '">' + L.fetched + (window.TREK && window.TREK.weatherModelLabel ? ' · ' + window.TREK.weatherModelLabel : '') + ' ' + meta.when + ' (' + ageTxt + ' ' + L.ago + (age >= 360 ? ', ' + L.stale : '') + (meta.stale ? ', ' + L.offline : '') + ')</span> <button type="button" class="wxbtn" data-wx="refresh">' + L.refresh + '</button> <button type="button" class="wxbtn" data-wx="hourly">' + L.hourly + ' ▾</button></div>';
     html += '<div class="wxhour" hidden><canvas></canvas><div class="wxread"></div></div>';
     el.innerHTML = html;
     var hourBox = el.querySelector('.wxhour'), canvas = hourBox.querySelector('canvas'), btn = el.querySelector('[data-wx="hourly"]');

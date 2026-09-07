@@ -131,5 +131,7 @@
         "heat": "חום בגובה הנמוך: לצאת מוקדם, 3 ליטר מים"
       }
     }
-  }
+  },
+  "weatherModel": "meteofrance_seamless",
+  "weatherModelLabel": "Météo-France AROME/ARPEGE, blend beyond 4 days"
 }

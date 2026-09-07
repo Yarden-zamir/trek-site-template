@@ -54,7 +54,9 @@ and below it temperature and rain at your position. Timing is Naismith scaled to
 planned hours. The weather is fetched once for every hour at every sample point along each day
 (about one per 2.5 km plus the high point) and cached, so the slider and offline use need no
 further requests. A recommended start minimises exposed hours in risk while arriving before
-sunset.
+sunset. Storm risk means a thunderstorm weather code, or CAPE ≥ 400 J/kg together with lifted index
+≤ −2 and rain chance ≥ 20 %; CAPE alone is not a storm. Every warning and event links to the same
+numbers on Open-Meteo.
 
 ## Per-trek README
 

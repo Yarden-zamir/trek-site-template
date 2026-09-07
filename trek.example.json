@@ -48,7 +48,44 @@
     "עמק Salèse": "ROUTE 1 of 4",
     "Authion ridge": "ROUTE 3 of 4"
   },
-  "waypoints": [],
+  "waypoints": [
+    {
+      "name": "NIGHT 0 · Fri 11 Sep · HI hostel Le Chalet: check-in by 19:00, breakfast, phone +33 4 22 49 01 06",
+      "lat": 44.0683,
+      "lon": 7.2007,
+      "type": "Lodging"
+    },
+    {
+      "name": "NIGHT 1 · Sat 12 Sep · Le Boreon, Lac du Boreon: tent by the lake or ranch camping",
+      "lat": 44.11353,
+      "lon": 7.28474,
+      "type": "Night"
+    },
+    {
+      "name": "PASS · Col du Barn 2452 m - park boundary",
+      "lat": 44.1171,
+      "lon": 7.201,
+      "type": "Summit"
+    },
+    {
+      "name": "FINISH · Fri 18 Sep · Menton, train to Nice every 20-30 min",
+      "lat": 43.775,
+      "lon": 7.5,
+      "type": "Flag"
+    },
+    {
+      "name": "ESCAPE · Sospel station, Nice-Tende line",
+      "lat": 43.8765,
+      "lon": 7.448,
+      "type": "Escape"
+    },
+    {
+      "name": "FORD · balise 424 near Refuge de la Cougourde · dangerous in heavy rain",
+      "lat": 44.1226,
+      "lon": 7.3349,
+      "type": "Info"
+    }
+  ],
   "route": {
     "osm_relations": [
       18307045,
@@ -73,5 +110,26 @@
       "zoom": 11,
       "title": "GR52 overview"
     }
-  ]
+  ],
+  "gpxDescription": "Route geometry from OpenStreetMap relation 3315112, stages in walking order. Map data (c) OpenStreetMap contributors, ODbL.",
+  "enrich": {
+    "water_radius_m": 300,
+    "boundary": {
+      "osm_relation": 1024511,
+      "bbox": "43.85,7.12,44.2,7.6",
+      "name": "BOUNDARY · Mercantour park core · tent 19:00-09:00 only inside"
+    }
+  },
+  "strings": {
+    "en": {
+      "w": {
+        "heat": "Heat on the low ground: start early, 3 L water"
+      }
+    },
+    "he": {
+      "w": {
+        "heat": "חום בגובה הנמוך: לצאת מוקדם, 3 ליטר מים"
+      }
+    }
+  }
 }

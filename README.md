@@ -10,8 +10,12 @@ agent skill, which lists the inputs and the steps.
 
 ## How it fits together
 
-- `trek.json`: the one config. Name, slug, hostname, dates, timezone, route source
-  (OpenStreetMap relation ids or a GPX), waypoints, place-name links, section maps, enrichment.
+- `trek.json`: the one config. See `trek.example.json` for every key: `slug`, `name`, `shortName`,
+  `description`, `hostname`, `gpx`, `gpxDescription`, `timezone`, `plannedStart` (hour), `tentWindow`
+  (optional "HH:MM"), `languages`, `elevationDataset`, `places` (text → map focus query),
+  `waypoints`, `route` (`osm_relations` in walking order + `start`, or `gpx_in`), `sectionMaps`,
+  `enrich` (`water_radius_m`, optional `boundary`), `side_trips`, `strings` (per-language overrides
+  of the app's wording, for example the heat warning).
 - `src/body.html`: the content, written per trek, both languages. `src/head.html` (theme),
   `src/scripts.html` (language toggle, profile), `src/sw.js` (service worker template).
 - `site/map.js`: the generic app. Reads `window.TREK` (injected by the build) and the GPX.
@@ -36,6 +40,11 @@ Waypoint names carry meaning. The app reads them to find days, nights and the fi
 
 Day cards in `src/body.html` carry `data-day="n"` and `data-date="YYYY-MM-DD"`. The planned
 hours chip (`8–9 h`) in a card feeds the arrival estimate and the hourly walking window.
+
+## Per-trek README
+
+Keep this file's structure; replace the heading and the first paragraph with the trek, its dates
+and the live URL, and drop this section.
 
 ## Build and check
 

@@ -100,7 +100,7 @@ def enrich(all_pts):
       node["amenity"="fountain"]["drinking_water"="yes"]({bbox}); node["natural"="water"]["name"]({bbox});
       node["tourism"~"alpine_hut|wilderness_hut|camp_site"]({bbox}); node["amenity"="shelter"]({bbox}););out body;"""
     d = overpass(q)
-    landmarks = [(w["name"].split(" · ")[-1][:40] if " · " in w["name"] else w["name"][:40], w["lat"], w["lon"])
+    landmarks = [((w["name"].split(" · ")[-1] if " · " in w["name"] else w["name"]).split(":")[0].split(" - ")[0][:40], w["lat"], w["lon"])
                  for w in TREK["waypoints"] if w["type"] in ("Night", "Flag", "Lodging", "Summit")]
     sample = all_pts[::3]
     out = []
@@ -113,7 +113,8 @@ def enrich(all_pts):
         dist = min(hav((la, lo), p) for p in sample)
         kind = None
         if tg.get("natural") == "spring":
-            kind, label = "Water", "WATER · spring" + (" (drinking)" if tg.get("drinking_water") == "yes" else " (untreated)")
+            spring = tg.get("name:en") or tg.get("name")
+            kind, label = "Water", "WATER · spring" + (" - " + spring if spring else "") + (" (drinking)" if tg.get("drinking_water") == "yes" else " (untreated)")
         elif tg.get("amenity") in ("drinking_water", "fountain") or tg.get("man_made") == "water_tap":
             kind, label = "Water", "WATER · tap" + (" - " + tg["name"] if tg.get("name") else "")
         elif tg.get("natural") == "water":
@@ -131,7 +132,8 @@ def enrich(all_pts):
             continue
         if any(o["type"] == kind and hav((la, lo), (o["lat"], o["lon"])) < 120 for o in out):
             continue
-        label += " · " + near_lm(la, lo) + (f" · {round(dist)} m off track" if dist > 60 else "")
+        lm = near_lm(la, lo)
+        label += (" · " + lm if lm else "") + (f" · {round(dist)} m off track" if dist > 60 else "")
         out.append({"name": label, "lat": la, "lon": lo, "type": kind})
     print(f"enrichment: {len(out)} points", file=sys.stderr)
     return out

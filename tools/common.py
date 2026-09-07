@@ -10,13 +10,23 @@ NS = "http://www.topografix.com/GPX/1/1"
 OSMAND = "https://osmand.net"
 
 
+OVERPASS_SERVERS = ("https://overpass-api.de/api/interpreter", "https://overpass.openstreetmap.fr/api/interpreter",
+                    "https://overpass.kumi.systems/api/interpreter")
+
+
 def overpass(query: str, timeout: int = 240) -> dict:
-    """Run an Overpass query; back off on 429/504 which the public server returns often."""
-    for attempt in range(8):
-        r = requests.post("https://overpass-api.de/api/interpreter", data={"data": query}, headers=UA, timeout=timeout)
-        if r.status_code in (429, 504, 502):
-            wait = 15 * (attempt + 1)
-            print(f"overpass {r.status_code}, retry in {wait}s", file=sys.stderr)
+    """Run an Overpass query; rotate mirrors and back off on 429/504, which the public servers return often."""
+    for attempt in range(9):
+        server = OVERPASS_SERVERS[attempt % len(OVERPASS_SERVERS)]
+        try:
+            r = requests.post(server, data={"data": query}, headers=UA, timeout=timeout)
+        except requests.RequestException as e:
+            print(f"overpass {server}: {e}, next mirror", file=sys.stderr)
+            time.sleep(5)
+            continue
+        if r.status_code in (429, 504, 502) or "Dispatcher_Client" in r.text[:2000]:
+            wait = 10 * (attempt + 1)
+            print(f"overpass {server} {r.status_code}, retry in {wait}s", file=sys.stderr)
             time.sleep(wait)
             continue
         r.raise_for_status()

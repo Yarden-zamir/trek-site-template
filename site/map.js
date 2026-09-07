@@ -176,7 +176,7 @@
     canvas.addEventListener('mousemove', hover); canvas.addEventListener('touchstart', hover, { passive: false }); canvas.addEventListener('touchmove', hover, { passive: false });
     canvas.addEventListener('mouseleave', function () { drawProfile(null); if (hoverMarker) { map.removeLayer(hoverMarker); hoverMarker = null; } });
     var stats = container.querySelector('.profstats');
-    stats.textContent = T.total + ' ' + (route.length / 1000).toFixed(1) + ' ' + T.km + ' · ' + T.ascent + ' ' + Math.round(route.ascent) + ' ' + T.m + ' · ' + T.descent + ' ' + Math.round(route.descent) + ' ' + T.m + ' · EU-DEM 25 m';
+    stats.textContent = T.total + ' ' + (route.length / 1000).toFixed(1) + ' ' + T.km + ' · ' + T.ascent + ' ' + Math.round(route.ascent) + ' ' + T.m + ' · ' + T.descent + ' ' + Math.round(route.descent) + ' ' + T.m + (TREK.elevation ? ' · ' + TREK.elevation : '');
     drawProfile(null);
     window.addEventListener('resize', function () { drawProfile(null); });
 
@@ -332,6 +332,8 @@
       snap: { far: 'אתם במרחק {km} ק"מ מהמסלול. צילום המצב לא הוחל.', at: 'אתם בק"מ {km} של המסלול', walked: 'הלכתם היום', left: 'נשאר עד', ascent: 'עלייה שנותרה', pace: 'קצב', measured: 'נמדד', planned: 'מתוכנן', eta: 'הגעה משוערת', sunset: 'שקיעה', tent: 'מותר להקים מ-19:00', done: 'הושלם', show: 'הצג', undo: 'לא הושלם', noGeo: 'מיקום לא זמין בדפדפן הזה.', taken: 'צילום מצב', manual: 'נבחר במפה', pick: 'לחצו על המפה איפה שאתם.', off: 'מחוץ למסלול ב', before: 'הטרק עוד לא התחיל: אתם ליד ההתחלה.', after: 'אחרי הסיום: כל הכבוד.' }
     }
   };
+  /* per-trek wording: trek.json "strings": {"en": {"w": {"heat": "..."}, "snap": {...}}, "he": {...}} overrides any key */
+  (function () { var o = (window.TREK && window.TREK.strings) || {}; Object.keys(o).forEach(function (lang) { if (!T[lang]) return; Object.keys(o[lang]).forEach(function (grp) { if (typeof o[lang][grp] === 'object' && T[lang][grp]) Object.assign(T[lang][grp], o[lang][grp]); else T[lang][grp] = o[lang][grp]; }); }); })();
   var HOURLY = 'temperature_2m,precipitation,precipitation_probability,weather_code,wind_gusts_10m,cape,freezing_level_height,cloud_cover';
   var DAILY = 'weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_min,precipitation_sum,precipitation_probability_max,snowfall_sum,wind_gusts_10m_max,uv_index_max,sunrise,sunset';
   function hav(a, b) { var R = 6371000, dLat = (b.lat - a.lat) * Math.PI / 180, dLon = (b.lon - a.lon) * Math.PI / 180, s = Math.sin(dLat / 2), t = Math.sin(dLon / 2); return 2 * R * Math.asin(Math.sqrt(s * s + Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * t * t)); }

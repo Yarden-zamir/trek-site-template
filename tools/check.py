@@ -47,9 +47,10 @@ if "<head>" not in html:
     sys.exit("check: could not fetch " + url)
 probe = """<script>window.__log=[];window.addEventListener('error',function(e){window.__log.push('ERR '+e.message+' @'+e.filename+':'+e.lineno)});
 window.addEventListener('unhandledrejection',function(e){window.__log.push('REJ '+(e.reason&&e.reason.message))});
-setTimeout(function(){try{
+var __t0=Date.now(); (function waitWx(){ if(Date.now()-__t0<30000 && !document.querySelector('.wx .wxrow') && !document.querySelector('.wx .wxmeta')) return setTimeout(waitWx,500); setTimeout(function(){try{
   var tiles=document.querySelectorAll('.leaflet-tile').length, paths=document.querySelectorAll('path.leaflet-interactive').length;
   var wx=document.querySelectorAll('.wx .wxrow').length, wxlinks=document.querySelectorAll('.wx a.focus').length, daylinks=document.querySelectorAll('a.daylink').length;
+  var wxcards=document.querySelectorAll('.wx').length, wxrange=[].filter.call(document.querySelectorAll('.wx'),function(e){return e.textContent.indexOf('16')>=0&&e.children.length===1&&e.firstElementChild.className==='wxmeta'}).length;
   if(!window.gr52Data){document.title=JSON.stringify({exc:'GPX not loaded',log:window.__log});return;}
   var n2=null; (window.gr52Data.data.wpts).forEach(function(w){ if(!n2 && /^NIGHT 2 /.test(w.name)) n2=w; });
   if(n2) window.gr52Snapshot({coords:{latitude:n2.lat,longitude:n2.lon,accuracy:20}});
@@ -59,9 +60,9 @@ setTimeout(function(){try{
     var snap=(vis.querySelector('.snapbox')||{}).textContent||'';
     var cv=vis.querySelector('.stage:not(.done) .wxhour canvas');
     var stats=(document.querySelector('.profstats')||{}).textContent||'';
-    document.title=JSON.stringify({tiles:tiles,paths:paths,wx:wx,wxlinks:wxlinks,daylinks:daylinks,done:done,snap:snap.slice(0,160),canvas:cv?cv.width:0,stats:stats,log:window.__log});
+    document.title=JSON.stringify({tiles:tiles,paths:paths,wx:wx,wxlinks:wxlinks,wxcards:wxcards,wxrange:wxrange,daylinks:daylinks,done:done,snap:snap.slice(0,160),canvas:cv?cv.width:0,stats:stats,log:window.__log});
   },900);
-}catch(e){document.title=JSON.stringify({exc:e.message,log:window.__log})}},12000);</script>"""
+}catch(e){document.title=JSON.stringify({exc:e.message,log:window.__log})}},6000); })();</script>"""
 page = html.replace("<head>", "<head>" + probe, 1)
 base = url.rstrip("/")
 # absolute-path assets must resolve against the checked site, not the temp file
@@ -70,7 +71,7 @@ page = re.sub(r'"gpx":\s*"/', f'"gpx": "{base}/', page)
 page = page.replace("register('/sw.js')", "register('" + base + "/sw.js')")
 (tmp / "index.html").write_text(page)
 profile = tmp / "profile"
-proc = subprocess.Popen([CHROME, "--headless", "--disable-gpu", "--no-sandbox", f"--user-data-dir={profile}", "--virtual-time-budget=45000",
+proc = subprocess.Popen([CHROME, "--headless", "--disable-gpu", "--no-sandbox", f"--user-data-dir={profile}", "--virtual-time-budget=70000",
                          "--disable-web-security", "--allow-file-access-from-files",  # the probe page is a temp file fetching the checked site
                          "--window-size=500,1400", "--dump-dom", f"file://{tmp}/index.html"], stdout=open(tmp / "dom.html", "w"), stderr=subprocess.DEVNULL)
 for _ in range(90):
@@ -96,15 +97,20 @@ if res.get("tiles", 0) < 4:
     fails.append(f"map tiles drawn: {res.get('tiles')}")
 if res.get("paths", 0) < 5:
     fails.append(f"route/marker paths drawn: {res.get('paths')}")
-if res.get("wx", 0) < 1:
+# Open-Meteo forecasts 16 days ahead: before that window every card shows the "not yet available" note,
+# so the weather rows, place links and hourly chart cannot be checked until the trek is within 16 days.
+beyond_horizon = res.get("wx", 0) == 0 and res.get("wxcards", 0) > 0 and res.get("wxrange", 0) == res.get("wxcards", 0)
+if beyond_horizon:
+    print("weather: trek dates are beyond the 16-day forecast horizon; every card shows the 'not yet available' note")
+elif res.get("wx", 0) < 1:
     fails.append("no weather rows rendered (check network, dates within 16 days, trek.json timezone)")
-if res.get("wxlinks", 0) < 1:
+elif res.get("wxlinks", 0) < 1:
     fails.append("weather cards have no place links")
 if res.get("daylinks", 0) < 1:
     fails.append("no day-title links")
 if "1" not in res.get("done", ""):
     fails.append(f"snapshot did not mark day 1 done (done={res.get('done')!r}, snap={res.get('snap')!r})")
-if res.get("canvas", 0) < 100:
+if res.get("canvas", 0) < 100 and not beyond_horizon:
     fails.append("hourly chart canvas not drawn")
 print(json.dumps({k: v for k, v in res.items() if k != "log"}, ensure_ascii=False, indent=1))
 if fails:

@@ -6,7 +6,8 @@ an hourly chart, a position snapshot that marks finished days done, annotated se
 GPX as a download for OsmAnd. Deploys to a VPS with KitSHn.
 
 Built from the GR52 dossier at https://gr52.yarden-zamir.com. Use it through the `trek-dossier`
-agent skill, which lists the inputs and the steps.
+agent skill in `skills/trek-dossier/SKILL.md`, which lists the inputs and the steps. Install it with
+`ln -s $(pwd)/skills/trek-dossier ~/.claude/skills/trek-dossier` so edits here are live.
 
 ## How it fits together
 
@@ -15,7 +16,7 @@ agent skill, which lists the inputs and the steps.
   (optional "HH:MM"), `languages`, `elevationDataset`, `places` (text → map focus query),
   `waypoints`, `route` (`osm_relations` in walking order + `start`, or `gpx_in`), `sectionMaps`,
   `enrich` (`water_radius_m`, optional `boundary`), `side_trips`, `strings` (per-language overrides
-  of the app's wording, for example the heat warning), `treeline` (metres; exposure threshold for the day simulator), `heatLimit` (°C at your position counted as risk, default 32), `weatherModel` and `weatherModelLabel`
+  of the app's wording, for example the heat warning), `accent` (the trail's marking colour: recolours blazes, markers, warnings, the route line and section maps), `exposed` (stretches below the treeline that are still open ground, `[{"fromKm", "toKm", "name"}]`), `treeline` (metres; exposure threshold for the day simulator), `heatLimit` (°C at your position counted as risk, default 32), `weatherModel` and `weatherModelLabel`
   (Open-Meteo model id such as `meteofrance_seamless` for the Alps; values beyond that model's
   horizon are filled from the default blend; unset means the default blend, which matched the
   Israel Meteorological Service within about 1 °C).

@@ -134,5 +134,13 @@
   },
   "weatherModel": "meteofrance_seamless",
   "weatherModelLabel": "Météo-France AROME/ARPEGE, blend beyond 4 days",
-  "treeline": 2000
+  "treeline": 2000,
+  "accent": "#C8322B",
+  "exposed": [
+    {
+      "fromKm": 54,
+      "toKm": 67,
+      "name": "Authion ridge"
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["holidays", "astral", "requests"]
+# dependencies = ["holidays", "astral", "requests", "pyyaml"]
 # ///
 """Calendar facts for the trek dates that change transport and opening hours: public and religious
 holidays (national and regional), Shabbat where relevant, sunrise, sunset, civil twilight, daylight,
@@ -63,7 +63,7 @@ for d in span:
     daylight = s["sunset"] - s["sunrise"]
     phase = moon.phase(d)
     mtxt = "new" if phase < 1.8 else "waxing" if phase < 12.9 else "full" if phase < 16 else "waning" if phase < 26.5 else "new"
-    out.append(f"| {d} | {d.strftime('%a')} | {note} | {s['sunrise']:%H:%M} | {s['sunset']:%H:%M} | {str(daylight)[:-3]} h | {s['dusk']:%H:%M} | {mtxt} ({phase:.0f}) |")
+    out.append(f"| {d} | {d.strftime('%a')} | {note} | {s['sunrise']:%H:%M} | {s['sunset']:%H:%M} | {int(daylight.total_seconds() // 3600)}:{int(daylight.total_seconds() % 3600 // 60):02d} h | {s['dusk']:%H:%M} | {mtxt} ({phase:.0f}) |")
     if h:
         flags.append(f"{d} {d.strftime('%a')}: {h}")
 # DST changes inside or right after the window

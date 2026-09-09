@@ -111,7 +111,7 @@ print(f"""
 scaffolded {dest}
 
 next:
-  1. research (tools/find_route.py, tools/research.py, tools/calendar.py, tools/climate.py) and fill trek.json route + waypoints
+  1. research (tools/find_route.py, tools/research.py, tools/dates.py, tools/climate.py) and fill trek.json route + waypoints
   2. uv run tools/build_gpx.py && uv run tools/elevation.py && uv run tools/derive.py && uv run tools/maps.py
   3. write content.yaml (every language), then uv run tools/all.py --from build
   4. git push -u origin main   (deploys), then uv run tools/check.py --url https://{a.hostname}/

@@ -42,7 +42,7 @@ available" until then.
 4. **Data.** `uv run tools/build_gpx.py && uv run tools/elevation.py && uv run tools/derive.py &&
    uv run tools/maps.py`. `derive` fills `places`, `sectionMaps` and location defaults; review
    them. Copy the GPX to `~/Downloads/<slug>-<trail>-<year>.gpx`.
-5. **Research.** `uv run tools/research.py`, `uv run tools/calendar.py`, `uv run tools/climate.py`
+5. **Research.** `uv run tools/research.py`, `uv run tools/dates.py`, `uv run tools/climate.py`
    write `research/`. Read `research/osm.md` first: T-grades and hazards on the route's own ways,
    protected areas (where the camping rules live), huts with hours and phones, water with drinking
    tags, bus stops and stations, fords, peaks, via ferrata, shops. Merge the useful lines of

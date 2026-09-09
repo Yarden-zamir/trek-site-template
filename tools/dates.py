@@ -6,8 +6,8 @@
 holidays (national and regional), Shabbat where relevant, sunrise, sunset, civil twilight, daylight,
 moon phase, and DST changes. Writes research/calendar.md and prints it.
 
-  uv run tools/calendar.py                 # dates from content.yaml days, location from trek.json route.start
-  uv run tools/calendar.py --country FR --subdiv 06
+  uv run tools/dates.py                 # dates from content.yaml days, location from trek.json route.start
+  uv run tools/dates.py --country FR --subdiv 06
 Country is inferred from the start point when not given (IL, FR, IT, ES, CH, AT, DE, GR, PT, GB).
 """
 import argparse

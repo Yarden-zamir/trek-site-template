@@ -31,7 +31,7 @@ The `trek-dossier` agent skill in `skills/trek-dossier/SKILL.md` is the workflow
 uv run tools/new.py --slug … --name … --hostname … --start YYYY-MM-DD --days N   # scaffold a trek repo
 uv run tools/find_route.py --bbox … [--name …] [--pick id,id]   # find the OpenStreetMap relations
 uv run tools/research.py      # OSM deep dive along the line → research/osm.md + proposed waypoints
-uv run tools/calendar.py      # holidays, Shabbat, sun, moon, clock changes on the dates
+uv run tools/dates.py      # holidays, Shabbat, sun, moon, clock changes on the dates
 uv run tools/climate.py       # ten years of reanalysis on the dates per night and pass
 uv run tools/build_gpx.py     # route + waypoints + OSM water/huts/shelters → the GPX
 uv run tools/elevation.py     # heights for every point (resumable)

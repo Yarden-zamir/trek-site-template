@@ -1,84 +1,87 @@
 # Trek site template
 
-A static, offline-capable trip dossier for a multi-day trek: day plan in one or two languages,
-interactive map drawn from the real GPX, elevation profile, per-day live weather with warnings and
-an hourly chart, a position snapshot that marks finished days done, annotated section maps, and the
-GPX as a download for OsmAnd. Deploys to a VPS with KitSHn.
+A static, offline-capable trip dossier for a multi-day trek: a day plan in one or more languages,
+an interactive map drawn from the real GPX, elevation profile, per-day live weather with derived
+warnings, an hour-by-hour day simulator with a start-time slider, a position snapshot that marks
+finished days done, annotated section maps, and the GPX as a download for OsmAnd. Deploys to a VPS
+with KitSHn. Content is data (`content.yaml`); the tools do the rest.
 
-Built from the GR52 dossier at https://gr52.yarden-zamir.com. Use it through the `trek-dossier`
-agent skill in `skills/trek-dossier/SKILL.md`, which lists the inputs and the steps. Install it with
+Sites built from it:
+
+- [gr52.yarden-zamir.com](https://gr52.yarden-zamir.com), the GR52 across the Mercantour, 7 days, tent, alpine
+- [yam2yam.yarden-zamir.com](https://yam2yam.yarden-zamir.com), the Israel Sea to Sea, 4 days, tent, heat
+
+The `trek-dossier` agent skill in `skills/trek-dossier/SKILL.md` is the workflow. Install it with
 `ln -s $(pwd)/skills/trek-dossier ~/.claude/skills/trek-dossier` so edits here are live.
 
-## How it fits together
+## The two files you write
 
-- `trek.json`: the one config. See `trek.example.json` for every key: `slug`, `name`, `shortName`,
-  `description`, `hostname`, `gpx`, `gpxDescription`, `timezone`, `plannedStart` (hour), `tentWindow`
-  (optional "HH:MM"), `languages`, `elevationDataset`, `places` (text → map focus query),
-  `waypoints`, `route` (`osm_relations` in walking order + `start`, or `gpx_in`), `sectionMaps`,
-  `enrich` (`water_radius_m`, optional `boundary`), `side_trips`, `strings` (per-language overrides
-  of the app's wording, for example the heat warning), `accent` (the trail's marking colour: recolours blazes, markers, warnings, the route line, section maps and the favicon), `exposed` (stretches below the treeline that are still open ground, `[{"fromKm", "toKm", "name"}]`), `treeline` (metres; exposure threshold for the day simulator), `heatLimit` (°C at your position counted as risk, default 32), `weatherModel` and `weatherModelLabel`
-  (Open-Meteo model id such as `meteofrance_seamless` for the Alps; values beyond that model's
-  horizon are filled from the default blend; unset means the default blend, which matched the
-  Israel Meteorological Service within about 1 °C).
-- `src/body.html`: the content, written per trek, both languages. `src/head.html` (theme),
-  `src/scripts.html` (language toggle, profile), `src/sw.js` (service worker template).
-- `site/map.js`: the generic app. Reads `window.TREK` (injected by the build) and the GPX.
-- `src/build.py`: assembles `site/index.html`, `site/sw.js`, `site/manifest.webmanifest`,
-  `Caddyfile.j2`. Adds table captions and card labels, links place names, inserts section maps.
-- `tools/`: `build_gpx.py` (route + waypoints + OpenStreetMap enrichment), `elevation.py`
-  (OpenTopoData heights), `maps.py` (section maps from OpenTopoMap tiles), `side_trips.py`
-  (optional routed side tracks), `check.py` (headless Chrome verification of the built site).
+- `trek.json`: the config. `trek.example.json` shows every key. Route (OpenStreetMap relation ids in
+  walking order, or a GPX), waypoints (nights, passes, escapes, notes), hostname, dates, accent
+  colour, and the knobs the app uses (`plannedStart`, `treeline`, `exposed`, `heatLimit`,
+  `weatherModel`). `tools/derive.py` fills `places`, `sectionMaps` and location-based defaults.
+- `content.yaml`: the page text per language. One entry per day with `title`, `label`, `stats`,
+  `hours`, `text`; then rules, the refuges table, technical options, practical lists, extra
+  sections and links. Inline `<b>`, `<i>`, `<a>` are allowed; no other markup. The renderer emits
+  every attribute the app depends on, so the structure cannot be wrong.
+
+## Commands
+
+```sh
+uv run tools/new.py --slug … --name … --hostname … --start YYYY-MM-DD --days N   # scaffold a trek repo
+uv run tools/find_route.py --bbox … [--name …] [--pick id,id]   # find the OpenStreetMap relations
+uv run tools/research.py      # OSM deep dive along the line → research/osm.md + proposed waypoints
+uv run tools/calendar.py      # holidays, Shabbat, sun, moon, clock changes on the dates
+uv run tools/climate.py       # ten years of reanalysis on the dates per night and pass
+uv run tools/build_gpx.py     # route + waypoints + OSM water/huts/shelters → the GPX
+uv run tools/elevation.py     # heights for every point (resumable)
+uv run tools/derive.py        # places, section maps, defaults into trek.json
+uv run tools/maps.py          # annotated section maps as WebP
+uv run tools/doctor.py        # config, waypoints, content and GPX checks with fixes spelled out
+uv run src/build.py           # content.yaml → page, service worker, manifest, Caddyfile.j2, favicon
+uv run tools/check.py [--url https://host/]   # headless Chrome: map, weather, links, snapshot, simulator, screenshot
+uv run tools/all.py [--from build] [--skip maps]   # doctor → gpx → elevation → maps → build → doctor → check
+uv run tools/import_body.py   # convert a hand-written src/body.html into content.yaml (migration)
+uv run tools/side_trips.py    # optional: route side trips over OSM paths
+```
+
+## What the page does
+
+- **Map** from the GPX with layer toggles per track and waypoint kind, place names and day titles
+  linking to it, deep links `#map=<name>` and `#map=day:N`.
+- **Weather** per day at the night spot and the day's high point from Open-Meteo, with a per-trek
+  model choice (`weatherModel`, values beyond its horizon filled from the default blend). Warnings
+  are computed, not typed: storm (thunderstorm code, or CAPE ≥ 400 with lifted index ≤ −2 and rain
+  chance ≥ 20 %), rain, snow, wind, frost, heat, fog, UV, late arrival. Every warning links to its
+  numbers on Open-Meteo.
+- **Day simulator**: a start-time slider over your altitude and exposure through the day, the
+  weather at the place you would be, an ECMWF ensemble storm strip, the events you meet, and a
+  recommended start. Weather for every hour at every sample point along the route is fetched once
+  and cached, so the slider and offline use need no requests.
+- **Snapshot**: one position fix, or a long-press to pick on the map, marks earlier days done and
+  fills today's card with distance, ascent left and an arrival estimate.
+- **Offline**: a versioned service worker precaches the page, GPX, app, section maps; tiles and
+  fonts are cached as used; "Save whole route offline" stores a tile corridor.
 
 ## Conventions the app relies on
 
-Waypoint names carry meaning. The app reads them to find days, nights and the finish:
+Waypoint names carry meaning: `NIGHT n · <date> · <place>: <note>` (with `NIGHT 0` the night
+before day 1), `FINISH · …`, `PASS · <name> <ele> m - <note>` (type `Summit`), `NIGHT n option B`
+and `FALLBACK` are ignored by the day logic. Types (Night, Flag, Lodging, Campsite, Water, Summit,
+SideTrip, ViaFerrata, Escape, Transport, Shelter, Info) set colours, icons and map layers. Tracks:
+`ROUTE i of N · …`, `BOUNDARY · …`, `SIDE TRIP · …`, `VIA FERRATA · …`.
 
-- `NIGHT n · <date> · <place>: <note>` for each sleeping spot, `NIGHT 0` for the night before day 1.
-- `FINISH · <date> · <place>` for the end.
-- `PASS · <name> <ele> m - <note>` for cols and summits on the line (type `Summit`).
-- `FALLBACK night n · …` and `NIGHT n option B · …` are ignored by the day logic.
-- Types: Night, Flag, Lodging, Campsite, Water, Summit, SideTrip, ViaFerrata, Escape, Transport,
-  Shelter, Info. Type sets the colour and icon in OsmAnd and the map layer group.
-- Tracks: `ROUTE i of N · …` (the walking line, in order), `BOUNDARY · …`, `SIDE TRIP · …`,
-  `VIA FERRATA · …`.
+## Layout
 
-Day cards in `src/body.html` carry `data-day="n"` and `data-date="YYYY-MM-DD"`. The planned
-hours chip (`8–9 h`) in a card feeds the arrival estimate and the hourly walking window.
-
-## Day simulator
-
-"Hour by hour" on a day card opens a start-time slider (05:30 to 10:00) over one chart: your
-altitude through the day for that start, drawn thick where exposed (above `treeline` in trek.json,
-or near a PASS waypoint), storm, heavy-rain and gust hours shaded at the place you would be, a
-strip with the share of ECMWF ensemble members showing storm conditions at the day's high point,
-and below it temperature and rain at your position. Timing is Naismith scaled to the card's
-planned hours. The weather is fetched once for every hour at every sample point along each day
-(about one per 2.5 km plus the high point) and cached, so the slider and offline use need no
-further requests. A recommended start minimises exposed hours in risk while arriving before
-sunset. Storm risk means a thunderstorm weather code, or CAPE ≥ 400 J/kg together with lifted index
-≤ −2 and rain chance ≥ 20 %; CAPE alone is not a storm. Every warning and event links to the same
-numbers on Open-Meteo.
-
-## Per-trek README
-
-Keep this file's structure; replace the heading and the first paragraph with the trek, its dates
-and the live URL, and drop this section.
-
-## Build and check
-
-```sh
-uv run tools/build_gpx.py      # route + waypoints from trek.json
-uv run tools/elevation.py      # heights
-uv run tools/maps.py           # section maps
-uv run src/build.py            # the page
-uv run tools/check.py          # headless Chrome: map, weather, links, snapshot, hourly chart
-uv run tools/check.py --url https://your.host/   # same checks against the deployed site
-```
+- `src/`: `render.py` (content.yaml → body), `build.py`, `head.html` (theme), `scripts.html`, `sw.js`
+- `site/`: `map.js` (the app), `vendor/` (Leaflet 1.9.4), built files
+- `tools/`: the commands above; `research/`: what the research tools write, plus `findings.md`
+- `container/Caddyfile`, `compose.yml`, `Dockerfile`, `.kitshn.yaml`, `kitshn.md`: the deploy recipe
 
 ## Credits
 
-Route data © OpenStreetMap contributors (ODbL). Map tiles © OpenTopoMap (CC BY-SA). Heights from
-OpenTopoData. Weather from Open-Meteo. Leaflet 1.9.4 vendored under `site/vendor/`.
+Route data © OpenStreetMap contributors (ODbL). Tiles © OpenTopoMap (CC BY-SA). Heights from
+OpenTopoData. Weather, ensembles and reanalysis from Open-Meteo. Leaflet under `site/vendor/`.
 
 ## License
 

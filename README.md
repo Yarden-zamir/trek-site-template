@@ -47,8 +47,14 @@ uv run tools/side_trips.py    # optional: route side trips over OSM paths
 
 ## What the page does
 
-- **Map** from the GPX with layer toggles per track and waypoint kind, place names and day titles
-  linking to it, deep links `#map=<name>` and `#map=day:N`.
+- **Days as tabs**: every day card has Plan, Map and Weather tabs. The Map tab holds the live map
+  scoped to that day's stretch (highlighted, fitted, with the day's elevation profile and stats); the
+  Weather tab carries a badge with the day's warning count. One map per language moves between the
+  day tabs and the whole-route host in the Maps section.
+- **Map** from the GPX with layer toggles per track and waypoint kind, waypoint icons from the GPX
+  `osmand:icon` names, rotation (two-finger twist, right-drag, ↺ ↻ buttons, compass resets north;
+  `@tomickigrzegorz/leaflet-rotate`, MIT, vendored), place names and day titles linking to it, deep
+  links `#map=<name>` and `#map=day:N`. A place link inside a day opens that day's Map tab.
 - **Weather** per day at the night spot and the day's high point from Open-Meteo, with a per-trek
   model choice (`weatherModel`, values beyond its horizon filled from the default blend). Warnings
   are computed, not typed: storm (thunderstorm code, or CAPE ≥ 400 with lifted index ≤ −2 and rain
@@ -58,8 +64,10 @@ uv run tools/side_trips.py    # optional: route side trips over OSM paths
   weather at the place you would be, an ECMWF ensemble storm strip, the events you meet, and a
   recommended start. Weather for every hour at every sample point along the route is fetched once
   and cached, so the slider and offline use need no requests.
-- **Snapshot**: one position fix, or a long-press to pick on the map, marks earlier days done and
-  fills today's card with distance, ascent left and an arrival estimate.
+- **Snapshot**: the round button fixed at the bottom left takes one position fix (long-press to pick
+  on the map instead). It draws you on the map and as a dot on the elevation profile from the same
+  state, opens the Map tab of the day you are on, marks earlier days done and fills today's card with
+  distance, ascent left and an arrival estimate.
 - **Offline**: a versioned service worker precaches the page, GPX, app, section maps; tiles and
   fonts are cached as used; "Save whole route offline" stores a tile corridor.
 
@@ -74,7 +82,7 @@ SideTrip, ViaFerrata, Escape, Transport, Shelter, Info) set colours, icons and m
 ## Layout
 
 - `src/`: `render.py` (content.yaml → body), `build.py`, `head.html` (theme), `scripts.html`, `sw.js`
-- `site/`: `map.js` (the app), `vendor/` (Leaflet 1.9.4), built files
+- `site/`: `map.js` (the app), `vendor/` (Leaflet 1.9.4, leaflet-rotate 0.2.4), built files
 - `tools/`: the commands above; `research/`: what the research tools write, plus `findings.md`
 - `container/Caddyfile`, `compose.yml`, `Dockerfile`, `.kitshn.yaml`, `kitshn.md`: the deploy recipe
 

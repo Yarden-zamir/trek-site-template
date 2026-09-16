@@ -69,7 +69,11 @@ uv run tools/side_trips.py    # optional: route side trips over OSM paths
   state, opens the Map tab of the day you are on, marks earlier days done and fills today's card with
   distance, ascent left and an arrival estimate.
 - **Offline**: a versioned service worker precaches the page, GPX, app, section maps; tiles and
-  fonts are cached as used; "Save whole route offline" stores a tile corridor.
+  fonts are cached as used; "Save whole route offline" stores a tile corridor (z12–16) straight into
+  the tile cache. The last forecast is saved in the browser and painted first on every load, then
+  replaced when the network answers; a stalled request times out after 30 s; a past day says so
+  instead of "not yet available"; one bad card cannot blank the others; the GPX load retries with a
+  growing pause until it succeeds.
 
 ## Conventions the app relies on
 

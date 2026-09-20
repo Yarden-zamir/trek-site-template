@@ -75,6 +75,21 @@ uv run tools/side_trips.py    # optional: route side trips over OSM paths
   instead of "not yet available"; one bad card cannot blank the others; the GPX load retries with a
   growing pause until it succeeds.
 
+## Trip log (unlisted)
+
+After the trek, `log/<github-user>/log.yaml` makes `site/log/<github-user>/` (not linked, `noindex`):
+an intro and one card per day with Pictures (a 2-column grid), Log (the text, with `[[map:QUERY|label]]`
+links and `[[photo:ID]]` pictures inline), Map (the day's stretch with one dot per group of pictures
+taken within 150 m; tap for thumbnails) and Weather (that day's ERA5 history from Open-Meteo; the tab
+disappears when there is none). Pictures are uploaded on the page itself to `/log/<user>/upload`, a
+small service (`uploader/`, Python + Pillow) that reads the time and place from the picture, resizes
+it, and keeps `photos/index.json` on a volume shared with the Caddy container (`compose.yml`). Nothing
+uploaded enters git. `photos:` in `log.yaml` sets a picture's caption or day by id. There is no
+access control yet: the page is unlisted and the service has size limits.
+
+Every map link on both pages becomes `?map=<query>&from=<where you were>` and shows a "Back to …"
+bubble; the browser's back button does the same.
+
 ## Conventions the app relies on
 
 Waypoint names carry meaning: `NIGHT n · <date> · <place>: <note>` (with `NIGHT 0` the night
@@ -85,8 +100,9 @@ SideTrip, ViaFerrata, Escape, Transport, Shelter, Info) set colours, icons and m
 
 ## Layout
 
-- `src/`: `render.py` (content.yaml → body), `build.py`, `head.html` (theme), `scripts.html`, `sw.js`
-- `site/`: `map.js` (the app), `vendor/` (Leaflet 1.9.4, leaflet-rotate 0.2.4), built files
+- `src/`: `render.py` (content.yaml → body), `render_log.py` (log.yaml → log page), `build.py`, `head.html` (theme), `scripts.html`, `sw.js`
+- `site/`: `map.js` (map, navigation), `trip.js` (weather, simulator, snapshot), `log.js` (pictures, history, upload), `vendor/` (Leaflet 1.9.4, leaflet-rotate 0.2.4), built files
+- `uploader/`: the picture upload service for the trip logs
 - `tools/`: the commands above; `research/`: what the research tools write, plus `findings.md`
 - `container/Caddyfile`, `compose.yml`, `Dockerfile`, `.kitshn.yaml`, `kitshn.md`: the deploy recipe
 

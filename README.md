@@ -79,12 +79,14 @@ uv run tools/side_trips.py    # optional: route side trips over OSM paths
 ## Trip log (unlisted)
 
 After the trek, `log/<github-user>/log.yaml` makes `site/log/<github-user>/` (not linked, `noindex`):
-an intro and one card per day with Pictures (a 2-column grid), Log (the text, with `[[map:QUERY|label]]`
-links and `[[photo:ID]]` pictures inline), Map (the day's stretch with one dot per group of pictures
-taken within 150 m; tap for thumbnails) and Weather (that day's ERA5 history from Open-Meteo; the tab
+an intro and one card per day with Log (the text, opened first, with `[[map:QUERY|label]]` links and
+`[[photo:ID]]` pictures inline), Pictures (a grid of everything from that day), Map (the day's stretch
+with the pictures as a "Pictures" overlay: one preview per group that would overlap at the current
+zoom, up to four previews split in the circle and a count, tap for thumbnails; the whole-route map
+shows them only once zoomed in) and Weather (that day's ERA5 history from Open-Meteo; the tab
 disappears when there is none). Pictures are uploaded on the page itself to `/log/<user>/upload`, a
 small service (`uploader/`, Python + Pillow) that reads the time and place from the picture, resizes
-it, and keeps `photos/index.json` on a volume shared with the Caddy container (`compose.yml`). Nothing
+it (page, grid and a small square for the map), and keeps `photos/index.json` on a volume shared with the Caddy container (`compose.yml`). Nothing
 uploaded enters git. `photos:` in `log.yaml` sets a picture's caption, day or place by id, or hides it
 (`hide: true`). A zip (a Google Photos album download) is unpacked in the browser, three pictures go up
 at a time, a failed one is retried, and what the log already holds (same file name or same second) is

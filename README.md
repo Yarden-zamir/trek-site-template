@@ -35,6 +35,7 @@ uv run tools/dates.py      # holidays, Shabbat, sun, moon, clock changes on the 
 uv run tools/climate.py       # ten years of reanalysis on the dates per night and pass
 uv run tools/build_gpx.py     # route + waypoints + OSM water/huts/shelters → the GPX
 uv run tools/elevation.py     # heights for every point (resumable)
+uv run tools/walked.py        # after the trek: walked.json edits (bypasses, spurs, moved nights) → the GPX as walked
 uv run tools/derive.py        # places, section maps, defaults into trek.json
 uv run tools/maps.py          # annotated section maps as WebP
 uv run tools/doctor.py        # config, waypoints, content and GPX checks with fixes spelled out
@@ -84,8 +85,15 @@ taken within 150 m; tap for thumbnails) and Weather (that day's ERA5 history fro
 disappears when there is none). Pictures are uploaded on the page itself to `/log/<user>/upload`, a
 small service (`uploader/`, Python + Pillow) that reads the time and place from the picture, resizes
 it, and keeps `photos/index.json` on a volume shared with the Caddy container (`compose.yml`). Nothing
-uploaded enters git. `photos:` in `log.yaml` sets a picture's caption or day by id. There is no
-access control yet: the page is unlisted and the service has size limits.
+uploaded enters git. `photos:` in `log.yaml` sets a picture's caption, day or place by id, or hides it
+(`hide: true`). A zip (a Google Photos album download) is unpacked in the browser, three pictures go up
+at a time, a failed one is retried, and what the log already holds (same file name or same second) is
+skipped, so a failed upload is finished by choosing the same zip again. There is no access control yet:
+the page is unlisted and the service has size limits.
+
+The route as walked: `walked.json` next to `trek.json` lists bypasses, out-and-backs and moved nights;
+`tools/walked.py` keeps the plan in `research/plan.gpx` and rebuilds the GPX from it through OpenStreetMap
+paths (straight lines where the map has none), so days, distances and picture dots follow what happened.
 
 Every map link on both pages becomes `?map=<query>&from=<where you were>` and shows a "Back to …"
 bubble; the browser's back button does the same.

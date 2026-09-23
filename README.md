@@ -36,6 +36,7 @@ uv run tools/climate.py       # ten years of reanalysis on the dates per night a
 uv run tools/build_gpx.py     # route + waypoints + OSM water/huts/shelters → the GPX
 uv run tools/elevation.py     # heights for every point (resumable)
 uv run tools/walked.py        # after the trek: walked.json edits (bypasses, spurs, moved nights) → the GPX as walked
+uv run tools/log_pull.py      # fold the edits made on the live log page into log/<user>/log.yaml
 uv run tools/derive.py        # places, section maps, defaults into trek.json
 uv run tools/maps.py          # annotated section maps as WebP
 uv run tools/doctor.py        # config, waypoints, content and GPX checks with fixes spelled out
@@ -92,6 +93,14 @@ uploaded enters git. `photos:` in `log.yaml` sets a picture's caption, day or pl
 at a time, a failed one is retried, and what the log already holds (same file name or same second) is
 skipped, so a failed upload is finished by choosing the same zip again. There is no access control yet:
 the page is unlisted and the service has size limits.
+
+Editing on the page: the pencil on a day card opens its text (one paragraph per blank line, with the
+`[[map:…]]`, `[[gmaps:…]]` and `[[photo:…]]` tokens) and saves it; a long press (or right click) on
+any picture offers to put it in or take it out of that day's log, hide it, or change its caption.
+Edits go to `POST /log/<user>/edit` and live in `photos/edits.json` beside the pictures, which the
+page lays over the built HTML on load, so they show at once and survive deploys; `tools/log_pull.py`
+folds them back into `log.yaml`. Set `LOG_EDIT_KEY` on the uploader to require a key for edits (the
+page asks once and remembers it). `[[gmaps:Place|label]]` links a business to Google Maps.
 
 The route as walked: `walked.json` next to `trek.json` lists bypasses, out-and-backs and moved nights;
 `tools/walked.py` keeps the plan in `research/plan.gpx` and rebuilds the GPX from it through OpenStreetMap

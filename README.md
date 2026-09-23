@@ -89,7 +89,10 @@ disappears when there is none). Pictures are uploaded on the page itself to `/lo
 small service (`uploader/`, Python + Pillow) that reads the time and place from the picture, resizes
 it (page, grid and a small square for the map), and keeps `photos/index.json` on a volume shared with the Caddy container (`compose.yml`). Nothing
 uploaded enters git. `photos:` in `log.yaml` sets a picture's caption, day or place by id, or hides it
-(`hide: true`). A zip (a Google Photos album download) is unpacked in the browser, three pictures go up
+(`hide: true`). `cover: {photo: ID, y: 45%}` (or just the id) puts that picture behind the page header and
+in the link preview (`og:image`); `y` is where the crop centres. The trip page borrows the log's cover
+unless `trek.json` sets its own `"cover": {"src": "/path.jpg", "y": "45%"}`. On the page, long-press a
+picture for "Use as the cover". A zip (a Google Photos album download) is unpacked in the browser, three pictures go up
 at a time, a failed one is retried, and what the log already holds (same file name or same second) is
 skipped, so a failed upload is finished by choosing the same zip again. There is no access control yet:
 the page is unlisted and the service has size limits.

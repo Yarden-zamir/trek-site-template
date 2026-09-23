@@ -100,7 +100,11 @@ any picture offers to put it in or take it out of that day's log, hide it, or ch
 Edits go to `POST /log/<user>/edit` and live in `photos/edits.json` beside the pictures, which the
 page lays over the built HTML on load, so they show at once and survive deploys; `tools/log_pull.py`
 folds them back into `log.yaml`. Set `LOG_EDIT_KEY` on the uploader to require a key for edits (the
-page asks once and remembers it). `[[gmaps:Place|label]]` links a business to Google Maps.
+page asks once and remembers it).
+
+Links in the log are chips with an icon for what they open: `[[map:Name|label]]` the site's map,
+`[[gmaps:Place|label]]` Google Maps (a business), `[[url:https://…|label]]` a site. Kinds joined with `;`
+(`[[map:NIGHT 0;gmaps:Le Chalet …|hostel]]`) make one chip that offers each on tap.
 
 The route as walked: `walked.json` next to `trek.json` lists bypasses, out-and-backs and moved nights;
 `tools/walked.py` keeps the plan in `research/plan.gpx` and rebuilds the GPX from it through OpenStreetMap

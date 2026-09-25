@@ -126,6 +126,15 @@ paths (straight lines where the map has none), so days, distances and picture do
 Every map link on both pages becomes `?map=<query>&from=<where you were>` and shows a "Back to …"
 bubble; the browser's back button does the same.
 
+On a wide screen (1100 px and up) or a phone on its side, the story page keeps the map beside the
+text, on the right in both languages, and it follows the day being read. The "Track the log" button
+on the map goes further: the map glides to the picture nearest the reading line whenever that picture
+changes, rings it, stays there between pictures, and shows the day's stretch before its first picture.
+The choice is remembered. TV mode (`?tv=1`, remembered, `?tv=0` leaves; a television's browser gets it
+by itself; there is a link at the foot of the page) makes the type and the map bigger, turns tracking on,
+and lets the remote drive: the arrows walk the text block by block (the lit block carries a frame),
+left and right jump between days, OK opens the picture under the frame, Back closes it.
+
 ## Conventions the app relies on
 
 Waypoint names carry meaning: `NIGHT n · <date> · <place>: <note>` (with `NIGHT 0` the night

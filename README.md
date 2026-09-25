@@ -106,7 +106,13 @@ Editing on the page: the pencil on a day card opens its text (one paragraph per 
 any picture offers to put it in or take it out of that day's log, hide it, or change its caption.
 Edits go to `POST /log/<user>/edit` and live in `photos/edits.json` beside the pictures, which the
 page lays over the built HTML on load, so they show at once and survive deploys; `tools/log_pull.py`
-folds them back into `log.yaml`. Set `LOG_EDIT_KEY` on the uploader to require a key for edits (the
+folds them back into `log.yaml`. Editing is for signed-in GitHub users named in `trek.json` `"editors"`
+(`["Yarden-zamir"]`): `src/build.py` writes `.env` from it, compose then runs oauth2-proxy (the same gate as
+the other recipes) and Caddy sends the editing routes through it; the page shows its pencils, the long
+press and the upload only to them, and a small sign-in link at the bottom to everyone else. The GitHub
+OAuth app's id, secret and a cookie secret come from the repo params `KITSHN_OAUTH2_PROXY_CLIENT_ID`,
+`KITSHN_OAUTH2_PROXY_CLIENT_SECRET` and `KITSHN_OAUTH2_PROXY_COOKIE_SECRET`. `"auth": true` in `trek.json` turns the gate on once those params exist; until then the editing routes are closed.
+(The old `LOG_EDIT_KEY` key is gone; the
 page asks once and remembers it).
 
 Links in the log are chips with an icon for what they open: `[[map:Name|label]]` the site's map,

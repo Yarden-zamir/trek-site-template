@@ -3,7 +3,7 @@
 A static, offline-capable trip dossier for a multi-day trek: a day plan in one or more languages,
 an interactive map drawn from the real GPX, elevation profile, per-day live weather with derived
 warnings, an hour-by-hour day simulator with a start-time slider, a position snapshot that marks
-finished days done, annotated section maps, and the GPX as a download for OsmAnd. Deploys to a VPS
+finished days done, annotated section maps, and the GPX as a download for any map app that reads it. Deploys to a VPS
 with KitSHn. Content is data (`content.yaml`); the tools do the rest.
 
 Sites built from it:

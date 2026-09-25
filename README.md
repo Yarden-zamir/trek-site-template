@@ -133,7 +133,12 @@ changes, rings it, stays there between pictures, and shows the day's stretch bef
 The choice is remembered. TV mode (`?tv=1`, remembered, `?tv=0` leaves; a television's browser gets it
 by itself; there is a link at the foot of the page) makes the type and the map bigger, turns tracking on,
 and lets the remote drive: the arrows walk the text block by block (the lit block carries a frame),
-left and right jump between days, OK opens the picture under the frame, Back closes it.
+left and right jump between days, OK opens the picture under the frame, Back closes it. "Cast to TV"
+(the button beside the language button in Chrome and Edge, the link at the foot everywhere) opens the page
+in TV mode on a Chromecast or a cast-capable TV through the Presentation API and keeps it on the phone's
+spot: the block being read, the language, the picture open in the lightbox; the TV shows "Following your
+phone". Without the API the link shows the address to open in the TV's browser. Beside the map the day
+number sits above its text and pictures fill the column.
 
 ## Conventions the app relies on
 

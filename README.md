@@ -42,6 +42,7 @@ uv run tools/maps.py          # annotated section maps as WebP
 uv run tools/doctor.py        # config, waypoints, content and GPX checks with fixes spelled out
 uv run src/build.py           # content.yaml → page, service worker, manifest, Caddyfile.j2, favicon
 uv run tools/check.py [--url https://host/]   # headless Chrome: map, weather, links, snapshot, simulator, screenshot
+uv run tools/links.py [--no-net]   # every link and reference: anchors, files, map queries against the GPX, pictures in the index, external pages really answering
 uv run tools/all.py [--from build] [--skip maps]   # doctor → gpx → elevation → maps → build → doctor → check
 uv run tools/import_body.py   # convert a hand-written src/body.html into content.yaml (migration)
 uv run tools/side_trips.py    # optional: route side trips over OSM paths

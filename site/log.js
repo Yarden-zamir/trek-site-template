@@ -766,8 +766,8 @@
     var lang = langOf(main), tv = document.documentElement.classList.contains('tv'), p = document.createElement('p'); p.className = 'foot';
     p.innerHTML = '<a href="?tv=' + (tv ? '0' : '1') + '">' + esc(T[lang][tv ? 'tvOff' : 'tvOn']) + '</a>' + (tv ? '' : ' · <a href="#" class="castlink">' + esc(T[lang].cast) + '</a><span class="casthow" hidden></span>'); main.appendChild(p);
   });
-  /* ---- cast to a TV. With the Presentation API (Chrome, Edge: a Chromecast or a cast-capable TV) the phone
-     opens this page on the TV in TV mode and keeps it on the same spot: the block under the eye, the language,
+  /* ---- cast to a TV, from the link at the foot of the page. With the Presentation API (Chrome, Edge: a Chromecast
+     or a cast-capable TV) the phone opens this page on the TV in TV mode and keeps it on the same spot: the block under the eye, the language,
      the picture open in the lightbox. Anywhere else, the address to type into the TV's browser. ---- */
   var CAST = new URL(location.href).searchParams.get('cast') === '1', castConn = null, castReq = null, castTimer = null, castLast = '';
   function castUrl() { return location.origin + location.pathname + '?tv=1&cast=1'; }
@@ -801,7 +801,7 @@
     if (!castConn) return; clearTimeout(castTimer);
     castTimer = setTimeout(function () { if (!castConn) return; var m = JSON.stringify(castState()); if (m === castLast) return; castLast = m; try { castConn.send(m); } catch (e) { } }, 120);
   }
-  function castMark(on) { document.body.classList.toggle('casting', on); var lang = visibleLang(); document.querySelectorAll('.castlink').forEach(function (a) { a.textContent = T[langOf(a)][on ? 'casting' : 'cast']; }); var b = document.getElementById('castbtn'); if (b) b.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  function castMark(on) { document.body.classList.toggle('casting', on); document.querySelectorAll('.castlink').forEach(function (a) { a.textContent = T[langOf(a)][on ? 'casting' : 'cast']; }); }
   function castTake(c) {
     castConn = c; castLast = ''; castMark(true); try { sessionStorage.setItem('trek.cast', c.id); } catch (e) { }
     c.onclose = c.onterminate = function () { if (castConn === c) { castConn = null; castMark(false); try { sessionStorage.removeItem('trek.cast'); } catch (e) { } } };
@@ -814,9 +814,6 @@
   if (!CAST && window.PresentationRequest) {
     try { castReq = new PresentationRequest([castUrl()]); navigator.presentation.defaultRequest = castReq; } catch (e) { castReq = null; }
     if (castReq) {
-      var cb = document.createElement('button'); cb.id = 'castbtn'; cb.type = 'button'; cb.title = T[visibleLang()].cast; cb.setAttribute('aria-label', cb.title); cb.setAttribute('aria-pressed', 'false');  /* a round button at the bottom right, like the position one at the left */
-      cb.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12a9 9 0 0 1 9 9M2 8a13 13 0 0 1 13 13M2 4h20v16h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="3.5" cy="19.5" r="1.7"/></svg>'; document.body.appendChild(cb); cb.addEventListener('click', castStart);
-      document.addEventListener('trek:lang', function () { setTimeout(function () { cb.title = T[visibleLang()].cast; cb.setAttribute('aria-label', cb.title); }, 30); });
       try { var old = sessionStorage.getItem('trek.cast'); if (old) castReq.reconnect(old).then(castTake).catch(function () { }); } catch (e) { }
       window.addEventListener('scroll', castSync, { passive: true }); document.addEventListener('trek:lang', function () { setTimeout(castSync, 50); });
     }

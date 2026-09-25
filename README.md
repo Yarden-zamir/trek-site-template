@@ -88,7 +88,11 @@ shows them only once zoomed in) and Weather (that day's ERA5 history from Open-M
 disappears when there is none). Pictures are uploaded on the page itself to `/log/<user>/upload`, a
 small service (`uploader/`, Python + Pillow) that reads the time and place from the picture, resizes
 it (page, grid and a small square for the map), and keeps `photos/index.json` on a volume shared with the Caddy container (`compose.yml`). Nothing
-uploaded enters git. `photos:` in `log.yaml` sets a picture's caption, day or place by id, or hides it
+uploaded enters git. Each day may carry `tips:` (per language, like `text:`), shown on a Tips tab for people
+doing the same walk, and the log may carry `sections:` (`[{key, title: {lang}, text: {lang: [paras]}}]`),
+reference sections rendered after the wrap-up, such as "Before you go" and "Links". With `"story": "<user>"`
+in `trek.json` that log is also the front page (`site/index.html`), and the plan moves to `/plan/` under a
+note that it is the plan as it was. `photos:` in `log.yaml` sets a picture's caption, day or place by id, or hides it
 (`hide: true`). `cover: {photo: ID, y: 45%}` (or just the id) puts that picture behind the page header and
 in the link preview (`og:image`); `y` is where the crop centres. The trip page borrows the log's cover
 unless `trek.json` sets its own `"cover": {"src": "/path.jpg", "y": "45%"}`. On the page, long-press a

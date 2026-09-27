@@ -127,19 +127,24 @@ paths (straight lines where the map has none), so days, distances and picture do
 Every map link on both pages becomes `?map=<query>&from=<where you were>` and shows a "Back to …"
 bubble; the browser's back button does the same.
 
-On a wide screen (1100 px and up) or a phone on its side, the story page keeps the map beside the
-text, on the right in both languages, and it follows the day being read. The "Track the log" button
-on the map goes further: the map glides to the picture nearest the reading line whenever that picture
-changes, rings it, stays there between pictures, and shows the day's stretch before its first picture.
-The choice is remembered. TV mode (`?tv=1`, remembered, `?tv=0` leaves; a television's browser gets it
-by itself; there is a link at the foot of the page) makes the type and the map bigger, turns tracking on,
-and lets the remote drive: the arrows walk the text block by block (the lit block carries a frame),
-left and right jump between days, OK opens the picture under the frame, Back closes it. "Cast to TV"
-(the button beside the language button in Chrome and Edge, the link at the foot everywhere) opens the page
-in TV mode on a Chromecast or a cast-capable TV through the Presentation API and keeps it on the phone's
-spot: the block being read, the language, the picture open in the lightbox; the TV shows "Following your
-phone". Without the API the link shows the address to open in the TV's browser. Beside the map the day
-number sits above its text and pictures fill the column.
+On a wide screen (960 px and up) or a phone on its side, the story page keeps the map beside the text,
+the full height of the window, on the far side of the reading direction (right in English, left in
+Hebrew), and it follows the day being read. The "Track the log" button on the map goes further: the map
+glides to the picture nearest the reading line whenever that picture changes, rings it, stays there
+between pictures, comes back after the reader drags it away, and shows the day's stretch before its first
+picture. The choice is remembered. The map's credit is folded into a small © that opens on tap or hover;
+the OpenStreetMap and OpenTopoMap licences ask for it, so it is not removed. The facts chips take as many
+columns as fit but never leave a hole: six are 6 × 1, 3 × 2 or 2 × 3.
+
+A television's browser gets bigger type by itself, and the remote drives: up and down walk the text block
+by block (the lit block carries a frame), left and right jump between days, OK opens the picture under the
+frame, Back closes it. Left, right, OK and Back work on any keyboard. "Cast to TV" at the foot of the page
+uses Google Cast when `trek.json` names a receiver app (`"castAppId"`): register a Custom Receiver at the
+Google Cast SDK Developer Console with the URL `https://<hostname>/?cast=1`, and the phone's own cast
+picker (Chrome, Edge) opens the page on the Chromecast and keeps it on the phone's spot: the block being
+read, the language, the picture open in the lightbox. Without an app id, desktop Chrome falls back to the
+Presentation API; anywhere else the link shows the address to open in the TV's browser. Beside the map
+the day number sits above its text and pictures fill the column.
 
 ## Conventions the app relies on
 

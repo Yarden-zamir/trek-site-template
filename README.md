@@ -87,8 +87,11 @@ with the pictures as a "Pictures" overlay: one preview per group that would over
 zoom, up to four previews split in the circle and a count, tap for thumbnails; the whole-route map
 shows them only once zoomed in) and Weather (that day's ERA5 history from Open-Meteo; the tab
 disappears when there is none). Pictures are uploaded on the page itself to `/log/<user>/upload`, a
-small service (`uploader/`, Python + Pillow) that reads the time and place from the picture, resizes
-it (page, grid and a small square for the map), and keeps `photos/index.json` on a volume shared with the Caddy container (`compose.yml`). Nothing
+small service (`uploader/`, Python + Pillow + ffmpeg) that reads the time and place from the picture, resizes
+it (page, grid and a small square for the map), and keeps `photos/index.json` on a volume shared with the Caddy container (`compose.yml`).
+Clips (mp4, mov, m4v, webm, up to 150 MB) are remade for the web (H.264, 1280 px, streamable) with a poster
+frame that gets the same sizes; they show as a poster with a play badge in the grid and the text and play in
+the lightbox. A clip's own clock is UTC: `LOG_TZ` (from `trek.json` `"timezone"`) turns it into local time. Nothing
 uploaded enters git. Each day may carry `tips:` (per language, like `text:`), shown on a Tips tab for people
 doing the same walk, and the log may carry `sections:` (`[{key, title: {lang}, text: {lang: [paras]}}]`),
 reference sections rendered after the wrap-up, such as "Before you go" and "Links". With `"story": "<user>"`

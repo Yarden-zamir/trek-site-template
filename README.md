@@ -117,7 +117,10 @@ press and the upload only to them, and a small sign-in link at the bottom to eve
 OAuth app's id, secret and a cookie secret come from the repo params `KITSHN_OAUTH2_PROXY_CLIENT_ID`,
 `KITSHN_OAUTH2_PROXY_CLIENT_SECRET` and `KITSHN_OAUTH2_PROXY_COOKIE_SECRET`. `"auth": true` in `trek.json` turns the gate on once those params exist; until then the editing routes are closed.
 `"defaultLanguage": "he"` makes a first visit open in that language (a `?lang=` link or the reader's own
-choice, remembered, wins); the first entry of `"languages"` still owns the unprefixed ids.
+choice, remembered, wins); the first entry of `"languages"` still owns the unprefixed ids. The page title
+and the link preview (what WhatsApp and the like show) follow it too: `"names"` and `"descriptions"`
+(`{lang: text}`) in `trek.json` beside `"name"` and `"description"`, and for a log its own `title:` and
+`description:` per language in `log.yaml`.
 (The old `LOG_EDIT_KEY` key is gone; the
 page asks once and remembers it).
 

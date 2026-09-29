@@ -95,6 +95,7 @@ The `trek-dossier` agent skill in `skills/trek-dossier/SKILL.md` gives the full 
 | `editors`, `auth` | The GitHub logins that can edit, and whether the sign-in service runs. |
 | `castAppId` | A Google Cast receiver app, registered for `https://<hostname>/?cast=1`. |
 | `repo` | The site's GitHub repo, for the link at the foot of the page. The default is the git remote. |
+| `analytics` | A Google Analytics (GA4) measurement id, `G-…`. The tag reports only on the production hostname. |
 
 ### `content.yaml`
 

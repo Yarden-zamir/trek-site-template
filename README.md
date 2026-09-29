@@ -95,7 +95,7 @@ The `trek-dossier` agent skill in `skills/trek-dossier/SKILL.md` gives the full 
 | `editors`, `auth` | The GitHub logins that can edit, and whether the sign-in service runs. |
 | `castAppId` | A Google Cast receiver app, registered for `https://<hostname>/?cast=1`. |
 | `repo` | The site's GitHub repo, for the link at the foot of the page. The default is the git remote. |
-| `analytics` | A Google Analytics (GA4) measurement id, `G-…`. The tag reports only on the production hostname. |
+| `analytics` | A Google Analytics (GA4) measurement id, `G-…`. The tag reports only on the production hostname. `site/analytics.js` adds the page events: scroll depth, days and sections reached, pictures opened, map use and map links, tabs, language and downloads. `tools/analytics.py` reads the reports through a service account that is an Editor on the Analytics account; set `GA_SERVICE_ACCOUNT`, and `GA_GCLOUD_ACCOUNT` for the gcloud login that impersonates it. |
 
 ### `content.yaml`
 
@@ -132,6 +132,7 @@ uv run tools/links.py [--no-net]   # every link and reference, and whether exter
 uv run tools/all.py [--from build] [--skip maps]   # doctor → GPX → heights → maps → build → doctor → check
 uv run tools/walked.py        # after the walk: walked.json → the GPX as walked
 uv run tools/log_pull.py      # fold the edits made on the live page into log/<user>/log.yaml
+uv run tools/analytics.py setup|report|live   # Google Analytics: register the page events, print the reports
 uv run tools/side_trips.py    # optional: side trips over OSM paths
 uv run tools/import_body.py   # migration: a hand-written src/body.html → content.yaml
 ```

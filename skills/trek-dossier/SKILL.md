@@ -1,6 +1,6 @@
 ---
 name: trek-dossier
-description: Build and deploy a trek dossier site for a multi-day hike (like gr52.yarden-zamir.com and yam2yam.yarden-zamir.com) from the trek-site-template. Day plan in English and Hebrew, live map from the real GPX, per-day weather with a day simulator, offline mode, GPX for OsmAnd, deployed with KitSHn. Use when the user asks for a trek plan site, hiking dossier, GPX plus map page, or "the same thing as the GR52 site" for another trail.
+description: Build and deploy a trek dossier site for a multi-day hike (like gr52.yarden-zamir.com and yam2yam.yarden-zamir.com) from the trek-site-template. Day plan in English and Hebrew, live map from the real GPX, per-day weather with a day simulator, offline mode, the GPX for any map app, a trip log with pictures and in-page editing, deployed with KitSHn. Use when the user asks for a trek plan site, hiking dossier, GPX plus map page, or "the same thing as the GR52 site" for another trail.
 ---
 
 # Trek dossier

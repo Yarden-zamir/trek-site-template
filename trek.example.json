@@ -12,6 +12,25 @@
     "en",
     "he"
   ],
+  "defaultLanguage": "en",
+  "names": {
+    "en": "GR52 + a tent",
+    "he": "GR52 + אוהל"
+  },
+  "descriptions": {
+    "en": "Seven days with a tent on the GR52, from Saint-Dalmas-Valdeblore to Menton.",
+    "he": "שבעה ימים עם אוהל על ה-GR52, מ-Saint-Dalmas-Valdeblore עד Menton."
+  },
+  "story": "your-github-login",
+  "editors": [
+    "your-github-login"
+  ],
+  "auth": false,
+  "castAppId": null,
+  "cover": {
+    "src": "/cover.jpg",
+    "y": "45%"
+  },
   "elevationDataset": "eudem25m",
   "places": {
     "Saint-Dalmas-Valdeblore": "NIGHT 0",

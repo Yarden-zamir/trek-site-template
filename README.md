@@ -151,7 +151,7 @@ The types set the colours, icons and map layers: Night, Flag, Lodging, Campsite,
 
 The repo is a KitSHn recipe: `.kitshn.yaml`, `compose.yml`, `Dockerfile`, `container/Caddyfile` and the generated `Caddyfile.j2` and `compose.override.yml`. A push to `main` deploys to production. A pull request gets a preview at `pr.<N>.<hostname>`. `kitshn.md` in each trek repo has its notes.
 
-KitSHn runs Compose with its own params file, so a `.env` in the repo has no effect. Secrets are GitHub secrets with the `KITSHN_` prefix, in the `prod` environment. The sign-in needs `KITSHN_OAUTH2_PROXY_CLIENT_ID`, `KITSHN_OAUTH2_PROXY_CLIENT_SECRET` and `KITSHN_OAUTH2_PROXY_COOKIE_SECRET`. Create the GitHub App with callback `https://<hostname>/auth/callback`, then set `"auth": true`. A pull request preview cannot sign in, because the app knows only the production callback.
+KitSHn runs Compose with its own params file, so a `.env` in the repo has no effect. Secrets are GitHub secrets with the `KITSHN_` prefix, in the `prod` environment. The sign-in needs `KITSHN_OAUTH2_PROXY_CLIENT_ID`, `KITSHN_OAUTH2_PROXY_CLIENT_SECRET` and `KITSHN_OAUTH2_PROXY_COOKIE_SECRET`. Create a public GitHub App with callback `https://<hostname>/auth/callback` (GitHub answers 404 to other people for a private app), then set `"auth": true`. A pull request preview cannot sign in, because the app knows only the production callback.
 
 ## Layout
 

@@ -154,6 +154,8 @@ The repo is a KitSHn recipe: `.kitshn.yaml`, `compose.yml`, `Dockerfile`, `conta
 
 KitSHn runs Compose with its own params file, so a `.env` in the repo has no effect. Secrets are GitHub secrets with the `KITSHN_` prefix, in the `prod` environment. The sign-in needs `KITSHN_OAUTH2_PROXY_CLIENT_ID`, `KITSHN_OAUTH2_PROXY_CLIENT_SECRET` and `KITSHN_OAUTH2_PROXY_COOKIE_SECRET`. Create a public GitHub App with callback `https://<hostname>/auth/callback` (GitHub answers 404 to other people for a private app), then set `"auth": true`. A pull request preview cannot sign in, because the app knows only the production callback.
 
+The build writes `robots.txt` and `sitemap.xml`, and a canonical link on each page. Only the front page is listed: the plan beside a story and the log copies are `noindex`. A pull request preview sends `X-Robots-Tag: noindex`, so it never shows up in search results.
+
 The host Caddy writes an access log for production to `/var/log/caddy/<owner>-<repo>-prod.access.log` on the VPS, in JSON. It counts the visits that an ad blocker hides from Google Analytics. The files roll at 20 MiB and go after 90 days.
 
 ## Layout

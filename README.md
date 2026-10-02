@@ -95,6 +95,7 @@ The `trek-dossier` agent skill in `skills/trek-dossier/SKILL.md` gives the full 
 | `editors`, `auth` | The GitHub logins that can edit, and whether the sign-in service runs. |
 | `castAppId` | A Google Cast receiver app, registered for `https://<hostname>/?cast=1`. |
 | `repo` | The site's GitHub repo, for the link at the foot of the page. The default is the git remote. |
+| `comments` | giscus comments under the story: `{repo, repoId, category, categoryId}` from https://giscus.app. The repo needs GitHub Discussions and the giscus app. Optional `term` names the thread (default `story`). |
 | `analytics` | A Google Analytics (GA4) measurement id, `G-…`. The tag reports only on the production hostname. `site/analytics.js` adds the page events: scroll depth, days and sections reached, pictures opened, map use and map links, tabs, language and downloads. `tools/analytics.py` reads the reports through a service account that is an Editor on the Analytics account; set `GA_SERVICE_ACCOUNT`, and `GA_GCLOUD_ACCOUNT` for the gcloud login that impersonates it. |
 
 ### `content.yaml`

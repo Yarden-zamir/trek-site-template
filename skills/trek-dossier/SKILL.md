@@ -1,6 +1,6 @@
 ---
 name: trek-dossier
-description: Build and deploy a trek dossier site for a multi-day hike (like gr52.yarden-zamir.com and yam2yam.yarden-zamir.com) from the trek-site-template. Day plan in English and Hebrew, live map from the real GPX, per-day weather with a day simulator, offline mode, the GPX for any map app, a trip log with pictures and in-page editing, deployed with KitSHn. Use when the user asks for a trek plan site, hiking dossier, GPX plus map page, or "the same thing as the GR52 site" for another trail.
+description: Build and deploy a trek dossier site for a multi-day hike (like gr52.yarden-zamir.com and yam2yam.yarden-zamir.com) from the trek-site-template. Day plan in English and Hebrew, live map from the real GPX, per-day weather with a day simulator, offline mode, the GPX for any map app, a trip log with pictures and in-page editing, deployed with kitshn. Use when the user asks for a trek plan site, hiking dossier, GPX plus map page, or "the same thing as the GR52 site" for another trail.
 ---
 
 # Trek dossier
@@ -28,7 +28,7 @@ available" until then.
 1. **Scaffold.** `uv run tools/new.py --slug <slug> --name "<Name>" --hostname <slug>.yarden-zamir.com --start YYYY-MM-DD --days N [--arrival YYYY-MM-DD]`
    from the template folder. It copies the template to `~/Github/<slug>`, writes skeleton
    `trek.json` and `content.yaml` with one day per date, rewrites the README intro, commits,
-   creates the public GitHub repo and runs `kitshn recipe auth`, so the first push deploys.
+   creates the public GitHub repo. The first push deploys with kitshn after the owner allows the repo.
    Work in `~/Github/<slug>` from here on.
 2. **Route.** `uv run tools/find_route.py --near "<start>" --near "<end>" --name "<regex>"` lists
    OpenStreetMap hiking relations in the box with names in every language, length, endpoints and
@@ -80,8 +80,9 @@ available" until then.
 - OpenTopoData allows 1 call per second and 1000 per day; `elevation.py` is resumable.
 - A route length far above the trail's means a chaining problem: check `route.start` and gaps.
 - Headless Chrome lays out at 500 px minimum; phone checks and screenshots use that width.
-- `recipe auth` reads the git remote, so worktree layouts are fine. The first push deploys.
-- Trip-log editing (optional): list GitHub logins in `trek.json` `"editors"`. Create a GitHub App with the
+- kitshn serves the committed `site/` folder. Commit the build before you push.
+- Trip-log editing needs the uploader, which kitshn 2 does not run. On kitshn 2 the page cannot take uploads or
+  edits; change `log/<user>/log.yaml` and push. The KitSHn 1 setup for later reference: list GitHub logins in `trek.json` `"editors"`. Create a GitHub App with the
   `github-app-setup` skill: callback `https://<hostname>/auth/callback`, permission `emails: read`. Put its
   client id, client secret and a cookie secret in the `prod` environment as `KITSHN_OAUTH2_PROXY_CLIENT_ID`,
   `KITSHN_OAUTH2_PROXY_CLIENT_SECRET` and `KITSHN_OAUTH2_PROXY_COOKIE_SECRET`. Then set `"auth": true` and

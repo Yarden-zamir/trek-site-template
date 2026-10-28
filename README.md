@@ -1,6 +1,6 @@
 # Trek site template
 
-A static site for a multi-day hike, before and after the walk. Before: a day-by-day plan with a live map from the real GPX, weather per day, a day simulator and an offline mode for the trail. After: the trip as a story, with pictures and videos on the map, a map that follows the reader, and editing on the page for the people who walked it. Both work in two languages, right-to-left included. The site deploys to a VPS with [KitSHn](https://github.com/Yarden-zamir/kitshn).
+A static site for a multi-day hike, before and after the walk. Before: a day-by-day plan with a live map from the real GPX, weather per day, a day simulator and an offline mode for the trail. After: the trip as a story, with pictures and videos on the map, a map that follows the reader, and editing on the page for the people who walked it. Both work in two languages, right-to-left included. The site deploys with [kitshn](https://kit.yarden-zamir.com) as a static site.
 
 Sites built from it:
 
@@ -71,8 +71,8 @@ site/ (HTML per language, service worker, manifest)   Caddyfile.j2   compose.ove
 2. Find the route: `uv run tools/find_route.py --bbox …` gives the OpenStreetMap relations; put them in `trek.json`.
 3. Research and build: `uv run tools/all.py` runs doctor, the GPX, the heights, the maps, the build and the checks.
 4. Write the days in `content.yaml` and run `uv run src/build.py`.
-5. Deploy with KitSHn: set it up once with `kitshn recipe auth`, then push `main`.
-6. After the walk: write `log/<github-user>/log.yaml`, set `"story"`, and upload the pictures on the page.
+5. Deploy with kitshn: commit `site/` and push `main`. The owner allows the repo in kitshn on the first deploy.
+6. After the walk: write `log/<github-user>/log.yaml` and set `"story"`. Uploads on the page need the uploader, which kitshn 2 does not run.
 
 The `trek-dossier` agent skill in `skills/trek-dossier/SKILL.md` gives the full workflow. To use it, link it with `ln -s $(pwd)/skills/trek-dossier ~/.claude/skills/trek-dossier`.
 
@@ -151,13 +151,11 @@ The types set the colours, icons and map layers: Night, Flag, Lodging, Campsite,
 
 ## Deploy
 
-The repo is a KitSHn recipe: `.kitshn.yaml`, `compose.yml`, `Dockerfile`, `container/Caddyfile` and the generated `Caddyfile.j2` and `compose.override.yml`. A push to `main` deploys to production. A pull request gets a preview at `pr.<N>.<hostname>`. `kitshn.md` in each trek repo has its notes.
+The repo deploys with kitshn 2: `kitshn.config.ts` and `.github/workflows/kitshn.yml`. kitshn serves the committed `site/` folder as a static site. A push to `main` deploys to production. A pull request gets a preview. `kitshn.md` in each trek repo has its notes.
 
-KitSHn runs Compose with its own params file, so a `.env` in the repo has no effect. Secrets are GitHub secrets with the `KITSHN_` prefix, in the `prod` environment. The sign-in needs `KITSHN_OAUTH2_PROXY_CLIENT_ID`, `KITSHN_OAUTH2_PROXY_CLIENT_SECRET` and `KITSHN_OAUTH2_PROXY_COOKIE_SECRET`. Create a public GitHub App with callback `https://<hostname>/auth/callback` (GitHub answers 404 to other people for a private app), then set `"auth": true`. A pull request preview cannot sign in, because the app knows only the production callback.
+kitshn 2 does not run `compose.yml`, the uploader or the sign-in. On kitshn 2 the page cannot take uploads or edits. To change a story, edit `log/<user>/log.yaml`, run the build and push.
 
-The build writes `robots.txt` and `sitemap.xml`, and a canonical link on each page. Only the front page is listed: the plan beside a story and the log copies are `noindex`. A pull request preview sends `X-Robots-Tag: noindex`, so it never shows up in search results.
-
-The host Caddy writes an access log for production to `/var/log/caddy/<owner>-<repo>-prod.access.log` on the VPS, in JSON. It counts the visits that an ad blocker hides from Google Analytics. The files roll at 20 MiB and go after 90 days.
+The build writes `robots.txt` and `sitemap.xml`, and a canonical link on each page. Only the front page is listed: the plan beside a story and the log copies are `noindex`. A pull request preview is open only to the owner, so search engines do not see it.
 
 ## Layout
 
@@ -165,7 +163,7 @@ The host Caddy writes an access log for production to `/var/log/caddy/<owner>-<r
 - `site/`: `map.js`, `log.js`, `trip.js`, `vendor/`, and the built files
 - `uploader/`: the upload and edit service
 - `tools/`: the commands above. `research/`: what the research tools write.
-- `container/`, `compose.yml`, `Dockerfile`, `.kitshn.yaml`: the deploy recipe
+- `kitshn.config.ts`: the kitshn deploy. `container/`, `compose.yml`, `Dockerfile`: the uploader setup, which kitshn 2 does not run
 - `skills/trek-dossier/`: the agent skill
 - `docs/screenshots/`: the pictures in this README
 

@@ -2,14 +2,14 @@
 # requires-python = ">=3.11"
 # dependencies = ["pyyaml"]
 # ///
-"""Scaffold a new trek repo from this template and wire the GitHub repo and KitSHn deploy key.
+"""Scaffold a new trek repo from this template and create its GitHub repo.
 
   uv run tools/new.py --slug yam2yam --name "Sea to Sea Dossier" --hostname yam2yam.yarden-zamir.com \
       --start 2026-09-10 --days 4 --arrival 2026-09-09 [--languages en,he] [--owner Yarden-zamir] [--no-github]
 
 Creates ~/Github/<slug>/ with trek.json and content.yaml skeletons (one day entry per date, labels
-filled), the README intro, an initial commit, the public GitHub repo, and runs `kitshn recipe auth`
-BEFORE the first push so the first push deploys. Prints the remaining steps.
+filled), the README intro, an initial commit and the public GitHub repo. The first push deploys with kitshn
+after the owner allows the repo in kitshn. Prints the remaining steps.
 """
 import argparse
 import datetime as dt
@@ -31,7 +31,6 @@ ap.add_argument("--days", type=int, required=True, help="number of walking days"
 ap.add_argument("--arrival", help="arrival day (night 0), default the day before --start")
 ap.add_argument("--languages", default="en,he")
 ap.add_argument("--owner", default="Yarden-zamir")
-ap.add_argument("--vps", default="root@89.233.108.13")
 ap.add_argument("--dest", default=str(Path.home() / "Github"))
 ap.add_argument("--no-github", action="store_true", help="only scaffold files")
 a = ap.parse_args()
@@ -106,7 +105,6 @@ run("git", "commit", "-q", "-m", f"feat: scaffold {a.name} from trek-site-templa
 if not a.no_github:
     run("gh", "repo", "create", f"{a.owner}/{a.slug}", "--public", "--description", trek["description"], "--homepage", f"https://{a.hostname}")
     run("git", "remote", "add", "origin", f"https://github.com/{a.owner}/{a.slug}.git")
-    run("kitshn", "recipe", "auth", "--vps-host", a.vps)
 print(f"""
 scaffolded {dest}
 
@@ -114,6 +112,6 @@ next:
   1. research (tools/find_route.py, tools/research.py, tools/dates.py, tools/climate.py) and fill trek.json route + waypoints
   2. uv run tools/build_gpx.py && uv run tools/elevation.py && uv run tools/derive.py && uv run tools/maps.py
   3. write content.yaml (every language), then uv run tools/all.py --from build
-  4. git push -u origin main   (deploys), then uv run tools/check.py --url https://{a.hostname}/
+  4. git push -u origin main   (deploys after the owner allows the repo in kitshn), then uv run tools/check.py --url https://{a.hostname}/
   5. $DOTFILES/bin/wt-migrate --yes {dest}   (bare + worktree layout; checkout moves to {dest}/main)
 """)
